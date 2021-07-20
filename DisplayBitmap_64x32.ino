@@ -29,7 +29,7 @@
 
 
 // Enable double buffering
-RGBmatrixPanel *matrix = new RGBmatrixPanel(A, B, C, D, CLK, LAT, OE, true, 64);
+//RGBmatrixPanel *matrix = new RGBmatrixPanel(A, B, C, D, CLK, LAT, OE, true, 64);
 
 // Panel Matrix doesn't fully work like Neomatrix (which I originally
 // wrote this demo for), so map a few calls to be compatible. The rest
@@ -565,19 +565,19 @@ const unsigned short YellowStar[2048] PROGMEM={
 };
 
 void loop() {
-    //matrix->drawRGBBitmap(x, y, bitmap, w, h); 
+    //matrix->drawRGBBitmap(x, y, bitmap, w, h);
     matrix->drawRGBBitmap(0, 0, (const uint16_t *)surface, 64, 32);
     matrix->show();
     delay(4000);
     matrix->clear(); //Set image to black
-  
+
     //matrix->show(); //Then show
     //delay(100);
     matrix->drawRGBBitmap(0, 0, (const uint16_t *)Moon, 64, 32);
     matrix->show();
     delay(4000);
-    matrix->clear(); //Set image to black 
-    
+    matrix->clear(); //Set image to black
+
     matrix->drawRGBBitmap(0, 0, (const uint16_t *)RedHeart, 64, 32);
     matrix->show();
     delay(4000);
