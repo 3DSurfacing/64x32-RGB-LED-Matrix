@@ -15,12 +15,8 @@ void loop(){
     int value1;
     int value2;
 
-
-
-
     bool isPlaying;
     bool isLit;
-
 
     isPlaying = false;
     isLit = false;
@@ -47,6 +43,5 @@ void loop(){
     } else{
         digitalWrite( LED_PIN, LOW );
     }
-
     delay( 100 );
 }
