@@ -1,24 +1,10 @@
-// RGB Panel GFX Demo example for 16x32 panel
-// By Marc MERLIN <marc_soft@merlins.org>
-// Contains code (c) Adafruit, license BSD
-
-// WILL NOT FIT on ARDUINO UNO -- requires a Mega, M0 or M4 board
-
-// Convert image to c file here http://www.rinkydinkelectronics.com/t_imageconverter565.php
+const int DIN_PIN1 = 3;
+const int DIN_PIN2 = 5;
+const int DIN_PIN3 = 7;
+const int LED_PIN = 13;
 
 #include <RGBmatrixPanel.h>
 
-// Most of the signal pins are configurable, but the CLK pin has some
-// special constraints.  On 8-bit AVR boards it must be on PORTB...
-// Pin 8 works on the Arduino Uno & compatibles (e.g. Adafruit Metro),
-// Pin 11 works on the Arduino Mega.  On 32-bit SAMD boards it must be
-// on the same PORT as the RGB data pins (D2-D7)...
-// Pin 8 works on the Adafruit Metro M0 or Arduino Zero,
-// Pin A4 works on the Adafruit Metro M4 (if using the Adafruit RGB
-// Matrix Shield, cut trace between CLK pads and run a wire to A4).
-
-//#define CLK  8 // USE THIS ON ARDUINO UNO, ADAFRUIT METRO M0, etc.
-//#define CLK A4 // USE THIS ON METRO M4 (not M0)
 #define CLK 11   // USE THIS ON ARDUINO MEGA
 #define OE   9
 #define LAT 10
@@ -27,18 +13,11 @@
 #define C   A2
 #define D   A3
 
-
-// Enable double buffering
 RGBmatrixPanel *matrix = new RGBmatrixPanel(A, B, C, D, CLK, LAT, OE, true, 64);
 
-// Panel Matrix doesn't fully work like Neomatrix (which I originally
-// wrote this demo for), so map a few calls to be compatible. The rest
-// comes from Adafruit_GFX and works the same on both backends.
 #define setBrightness(x) fillScreen(0) // no-op, no brightness on this board
 #define clear()          fillScreen(0)
 #define show()           swapBuffers(true)
-
-// vvvvv PASTE FRAME MATRIX BELOW vvvvv
 
 const unsigned short binKet[2048] PROGMEM={
 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,   // 0x0010 (16) pixels
@@ -433,35 +412,94 @@ const unsigned short binMine[2048] PROGMEM={
 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,   // 0x0800 (2048) pixels
 };
 
-// ^^^^^ PASTE FRAME MATRIX ABOVE ^^^^^
+int speed = 150;
 
+void ket() {
+  matrix->begin();
+  matrix->fillRect(0, 0, 64, 32, matrix->Color333(2, 6, 2));
+  matrix->show();
+  delay(speed);
+  matrix->drawRGBBitmap(0, 0, (const uint16_t *)binKet, 64, 32);
+  matrix->show();
+  delay(speed);
+  matrix->fillRect(0, 0, 64, 32, matrix->Color333(6, 6, 6));
+  matrix->show();
+  matrix->drawRGBBitmap(0, 0, (const uint16_t *)binKet, 64, 32);
+  matrix->show();
+  delay(speed);
+  matrix->fillRect(0, 0, 64, 32, matrix->Color333(6, 6, 6));
+  matrix->show();
+  matrix->drawRGBBitmap(0, 0, (const uint16_t *)binKet, 64, 32);
+  matrix->show();
+  delay(speed);
+  matrix->fillRect(0, 0, 64, 32, matrix->Color333(6, 6, 6));
+  matrix->show();
+  matrix->drawRGBBitmap(0, 0, (const uint16_t *)binKet, 64, 32);
+  matrix->show();
+  delay(speed);
+  matrix->fillRect(0, 0, 64, 32, matrix->Color333(6, 6, 6));
+  matrix->show();
+}
+
+void a() {
+  matrix->begin();
+  matrix->fillRect(0, 0, 64, 32, matrix->Color333(6, 6, 6));
+  matrix->show();
+  delay(500);
+  matrix->drawRGBBitmap(0, 0, (const uint16_t *)binA, 64, 32);
+  matrix->show();
+}
+
+void mine() {
+  matrix->begin();
+  matrix->fillRect(0, 0, 64, 32, matrix->Color333(13, 13, 13));
+  matrix->show();
+  delay(500);
+  matrix->drawRGBBitmap(0, 0, (const uint16_t *)binMine, 64, 32);
+  matrix->show();
+}
 
 void loop() {
 
-// vvvvv PASTE DISPLAY SCRIPT FOR EACH FRAME BELOW vvvvv
+    bool button1on = digitalRead( DIN_PIN1 ) == LOW;
+    bool button2on = digitalRead( DIN_PIN2 ) == LOW;
+    bool button3on = digitalRead( DIN_PIN3 ) == LOW;
 
-    //matrix->drawRGBBitmap(x, y, bitmap, w, h);
-    matrix->drawRGBBitmap(0, 0, (const uint16_t *)binKet, 64, 32);
-    matrix->show();
-    delay(100);
-    matrix->clear(); //Set image to black
+    if ( button1on ){
+      ket();
+    } else if ( button2on ) {
+      mine();
+      a();
+      ket();
+    } else if ( button3on ) {
+      ket();
+      ket();
+      ket();
+      a();
+      mine();
+    } else {
+      matrix->clear();
+    }
 
-    //matrix->drawRGBBitmap(x, y, bitmap, w, h);
-    matrix->drawRGBBitmap(0, 0, (const uint16_t *)binA, 64, 32);
-    matrix->show();
-    delay(100);
-    matrix->clear(); //Set image to black
-
-    //matrix->drawRGBBitmap(x, y, bitmap, w, h);
-    matrix->drawRGBBitmap(0, 0, (const uint16_t *)binMine, 64, 32);
-    matrix->show();
-    delay(100);
-    matrix->clear(); //Set image to black
-
-// ^^^^^ PASTE DISPLAY SCRIPT FOR EACH FRAME ABOVE ^^^^^
 }
 
 void setup() {
     Serial.begin(115200);
     matrix->begin();
+    pinMode( DIN_PIN1, INPUT_PULLUP );
+    pinMode( DIN_PIN2, INPUT_PULLUP );
+    pinMode( DIN_PIN3, INPUT_PULLUP );
+    pinMode( LED_PIN, OUTPUT );
+}
+
+uint16_t Wheel(byte WheelPos) {
+  if(WheelPos < 8) {
+   return matrix->Color333(7 - WheelPos, WheelPos, 0);
+  } else if(WheelPos < 16) {
+   WheelPos -= 8;
+   return matrix->Color333(0, 7-WheelPos, WheelPos);
+  } else {
+   WheelPos -= 16;
+   return matrix->Color333(WheelPos, 0, 7 - WheelPos);
+  }
 }
