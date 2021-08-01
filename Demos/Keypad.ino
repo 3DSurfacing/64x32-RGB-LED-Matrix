@@ -1,3 +1,4 @@
+
 const int DIN_PIN1 = 8;
 const int DIN_PIN2 = 7;
 const int DIN_PIN3 = 6;
@@ -7,7 +8,6 @@ const int DIN_PIN3 = 6;
 
 const byte ROWS = 4; //four rows
 const byte COLS = 3; //four columns
-
 char keys[ROWS][COLS] = {
   {'1','2','3'},
   {'4','5','6'},
@@ -35,6 +35,17 @@ RGBmatrixPanel *matrix = new RGBmatrixPanel(A, B, C, D, CLK, LAT, OE, true, 64);
 #define clear()          fillScreen(0)
 #define show()           swapBuffers(true)
 
+uint16_t Wheel(byte WheelPos) {
+  if(WheelPos < 8) {
+   return matrix->Color333(7 - WheelPos, WheelPos, 0);
+  } else if(WheelPos < 16) {
+   WheelPos -= 8;
+   return matrix->Color333(0, 7-WheelPos, WheelPos);
+  } else {
+   WheelPos -= 16;
+   return matrix->Color333(WheelPos, 0, 7 - WheelPos);
+  }
+}
 
 /* FRAME EXAMPLE BELOW:
 
@@ -45,7 +56,91 @@ const unsigned short binKet[2048] PROGMEM={
 
 int speed = 150;
 
-void a() {
+void coloredVersion(char str[]) {
+  matrix->begin();
+  // draw a box in yellow
+  matrix->drawRect(0, 0, matrix->width(), matrix->height(), matrix->Color333(0, 0, 7));
+  uint8_t w = 0;
+  matrix->setTextSize(2);
+  matrix->setCursor(9, 2);
+  for (w=0; w<10; w++) {
+    if (w < 4) {
+      matrix->setTextColor(Wheel(w));
+      matrix->print(str[w]);
+    } else if (w == 4) {
+      matrix->setTextSize(1.5);
+      matrix->setCursor(16, 20);    // next line
+      matrix->setTextColor(Wheel(w));
+      matrix->print(str[w]);
+    } else {
+      matrix->setTextColor(Wheel(w));
+      matrix->print(str[w]);
+    }
+  }
+  matrix->println();
+  matrix->show();
+  delay(500);
+  matrix->clear();
+}
+
+
+
+void whiteVersion(char str[]) {
+  matrix->begin();
+  matrix->drawRect(0, 0, matrix->width(), matrix->height(), matrix->Color333(15, 15, 15));
+  uint8_t x = 0;
+  matrix->setTextSize(2);
+  matrix->setCursor(9, 2);
+  for (x=0; x<10; x++) {
+    if (x < 4) {
+      matrix->setTextColor(matrix->Color333(15, 15, 15));
+      matrix->print(str[x]);
+    } else if (x == 4) {
+      matrix->setTextSize(1.5);
+      matrix->setCursor(16, 20);    // next line
+      matrix->setTextColor(matrix->Color333(15, 15, 15));
+      matrix->print(str[x]);
+    } else {
+      matrix->setTextColor(matrix->Color333(15, 15, 15));
+      matrix->print(str[x]);
+    }
+  }
+  matrix->println();
+  matrix->show();
+  delay(500);
+  matrix->fillRect(0, 0, matrix->width(), matrix->height(), matrix->Color333(0, 0, 0));
+  matrix->clear();
+}
+
+void blackVersion(char str[]) {
+  matrix->begin();
+  matrix->fillRect(0, 0, matrix->width(), matrix->height(), matrix->Color333(15, 15, 15));
+  matrix->drawRect(0, 0, matrix->width(), matrix->height(), matrix->Color333(0, 0, 0));
+  uint8_t x = 0;
+  matrix->setTextSize(2);
+  matrix->setCursor(9, 2);
+  for (x=0; x<10; x++) {
+    if (x < 4) {
+      matrix->setTextColor(matrix->Color333(0, 0, 0));
+      matrix->print(str[x]);
+    } else if (x == 4) {
+      matrix->setTextSize(1);
+      matrix->setCursor(16, 20);    // next line
+      matrix->setTextColor(matrix->Color333(0, 0, 0));
+      matrix->print(str[x]);
+    } else {
+      matrix->setTextColor(matrix->Color333(0, 0, 0));
+      matrix->print(str[x]);
+    }
+  }
+  matrix->println();
+  matrix->show();
+  delay(500);
+  matrix->fillRect(0, 0, matrix->width(), matrix->height(), matrix->Color333(0, 0, 0));
+  matrix->clear();
+}
+
+void prog1() {
   matrix->begin();
 
     // draw a pixel in solid white
@@ -78,13 +173,13 @@ void a() {
   matrix->fillCircle(40, 21, 10, matrix->Color333(7, 0, 7));
   matrix->show();
   delay(500);
+
 // fill the screen with 'black'
   matrix->fillScreen(matrix->Color333(0, 0, 0));
 
   // draw some text!
   matrix->setTextSize(1);     // size 1 == 8 pixels high
   matrix->setTextWrap(false); // Don't wrap at end of line - will do ourselves
-
   matrix->setCursor(8, 0);    // start at top left, with 8 pixel of spacing
   uint8_t w = 0;
   char *str = "SUMMER";
@@ -131,73 +226,21 @@ void a() {
   // whew!
 }
 
-void a2() {
-  coloredVersion();
-  whiteVersion();
-  coloredVersion();
-  whiteVersion();
-  coloredVersion();
-  whiteVersion();
-  coloredVersion();
-  whiteVersion();
+void prog2() {
+  coloredVersion("HARDSUMMER");
+  matrix->fillScreen(matrix->Color333(0, 0, 0));
+  whiteVersion("HARDSUMMER");
+  matrix->fillScreen(matrix->Color333(0, 0, 0));
+  blackVersion("HARDSUMMER");
+  matrix->fillScreen(matrix->Color333(0, 0, 0));
+  coloredVersion("HARDSUMMER");
+  matrix->fillScreen(matrix->Color333(0, 0, 0));
+  whiteVersion("HARDSUMMER");
+  matrix->fillScreen(matrix->Color333(0, 0, 0));
+  blackVersion("HARDSUMMER");
 }
 
-  void coloredVersion() {
-    char *str = "HARDSUMMER";
-    matrix->begin();
-    // draw a box in yellow
-    matrix->drawRect(0, 0, matrix->width(), matrix->height(), matrix->Color333(0, 0, 7));
-    uint8_t w = 0;
-    matrix->setTextSize(2);
-    matrix->setCursor(9, 2);
-    for (w=0; w<10; w++) {
-      if (w < 4) {
-        matrix->setTextColor(Wheel(w));
-        matrix->print(str[w]);
-      } else if (w == 4) {
-        matrix->setTextSize(1.5);
-        matrix->setCursor(16, 20);    // next line
-        matrix->setTextColor(Wheel(w));
-        matrix->print(str[w]);
-      } else {
-        matrix->setTextColor(Wheel(w));
-        matrix->print(str[w]);
-      }
-    }
-    matrix->println();
-    matrix->show();
-    delay(500);
-    matrix->clear();
-  }
-
-  void whiteVersion() {
-    char *str = "HARDSUMMER";
-    matrix->begin();
-    matrix->drawRect(0, 0, matrix->width(), matrix->height(), matrix->Color333(15, 15, 15));
-    uint8_t x = 0;
-    matrix->setTextSize(2);
-    matrix->setCursor(9, 2);
-    for (x=0; x<10; x++) {
-      if (x < 4) {
-        matrix->setTextColor(matrix->Color333(15, 15, 15));
-        matrix->print(str[x]);
-      } else if (x == 4) {
-        matrix->setTextSize(1.5);
-        matrix->setCursor(16, 20);    // next line
-        matrix->setTextColor(matrix->Color333(15, 15, 15));
-        matrix->print(str[x]);
-      } else {
-        matrix->setTextColor(matrix->Color333(15, 15, 15));
-        matrix->print(str[x]);
-      }
-    }
-    matrix->println();
-    matrix->show();
-    delay(500);
-    matrix->clear();
-  }
-
-void mine() {
+void prog3() {
   matrix->begin();
   matrix->fillRect(0, 0, 64, 32, matrix->Color333(13, 13, 13));
   matrix->show();
@@ -205,28 +248,92 @@ void mine() {
   matrix->show();
 }
 
+void prog4() {
+  // fix the screen with green
+  matrix->fillRect(0, 0, matrix->width(), matrix->height(), matrix->Color333(0, 7, 0));
+  matrix->show();
+  delay(500);
+}
+
+void prog5() {
+  matrix->clear();
+  matrix->show();
+  coloredVersion("DRUGTESTER");
+  whiteVersion("DRUGTESTER");
+}
+
+void prog6() {
+
+}
+
+void prog7() {
+
+}
+
+void prog8() {
+
+}
+
+void prog9() {
+
+}
+
+void progStar() {
+
+}
+
+void progZero() {
+
+}
+
+void progPound() {
+
+}
+
 void loop() {
-    bool button1on = digitalRead( DIN_PIN1 ) == LOW;
-    bool button2on = digitalRead( DIN_PIN2 ) == LOW;
-    bool button3on = digitalRead( DIN_PIN3 ) == LOW;
 
-    bool key1on = keypad.getKey() == '1';
+  char key = keypad.getKey();
 
-    char key = keypad.getKey();// Read the key
+  if (key){
+    Serial.println(key);
+  }
+    bool key1On = key == '1';
+    bool key2On = key == '2';
+    bool key3On = key == '3';
+    bool key4On = key == '4';
+    bool key5On = key == '5';
+    bool key6On = key == '6';
+    bool key7On = key == '7';
+    bool key8On = key == '8';
+    bool key9On = key == '9';
+    bool keyStarOn = key == '*';
+    bool keyZeroOn = key == '0';
+    bool keyPoundOn = key == '#';
 
-    // Print if key pressed
-    if (key){
-      Serial.print("Key Pressed : ");
-      Serial.println(key);
-    }
-
-    if ( button1on ){
-      a();
-    } else if ( key1on ) {
-      a2();
-    } else if ( button3on ) {
-      a();
-      mine();
+    if ( key1On ){
+      prog2();
+    } else if ( key2On ) {
+      prog1();
+    } else if ( key3On ) {
+      prog3();
+    } else if ( key4On ) {
+      prog4();
+    } else if ( key5On ) {
+      prog5();
+    } else if ( key6On ) {
+      prog6();
+    } else if ( key7On ) {
+      prog7();
+    } else if ( key8On ) {
+      prog8();
+    } else if ( key9On ) {
+      prog9();
+    } else if ( keyStarOn ) {
+      progStar();
+    } else if ( keyZeroOn ) {
+      progZero();
+    } else if ( keyPoundOn ) {
+      progPound();
     } else {
       matrix->clear();
     }
@@ -239,23 +346,4 @@ void setup() {
     pinMode( DIN_PIN1, INPUT_PULLUP );
     pinMode( DIN_PIN2, INPUT_PULLUP );
     pinMode( DIN_PIN3, INPUT_PULLUP );
-    a2();
-
-   char key = keypad.getKey();
-
-  if (key){
-    Serial.println(key);
-  }
-}
-
-uint16_t Wheel(byte WheelPos) {
-  if(WheelPos < 8) {
-   return matrix->Color333(7 - WheelPos, WheelPos, 0);
-  } else if(WheelPos < 16) {
-   WheelPos -= 8;
-   return matrix->Color333(0, 7-WheelPos, WheelPos);
-  } else {
-   WheelPos -= 16;
-   return matrix->Color333(WheelPos, 0, 7 - WheelPos);
-  }
 }
