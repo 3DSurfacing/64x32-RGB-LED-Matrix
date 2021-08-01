@@ -140,6 +140,28 @@ void blackVersion(char str[]) {
   matrix->clear();
 }
 
+void blackVersionScroll(char str[]) {
+  int count = 0;
+  matrix->begin();
+  matrix->fillRect(0, 0, matrix->width(), matrix->height(), matrix->Color333(15, 15, 15));
+  matrix->drawRect(0, 0, matrix->width(), matrix->height(), matrix->Color333(0, 0, 0));
+  uint8_t x = 0;
+  matrix->setTextSize(2);
+  int y;
+  for (y=0; y<20; y++) {
+    matrix->setCursor(18+y, 2);
+    for (x=0; x<sizeof(str); x++) {
+        matrix->setTextColor(matrix->Color333(0, 0, 0));
+        matrix->print(str[x]);
+    }
+    matrix->println();
+    matrix->show();
+    delay(100);
+  }
+  matrix->clear();
+}
+
+
 void prog1() {
   matrix->begin();
 
@@ -287,7 +309,7 @@ void progZero() {
 }
 
 void progPound() {
-
+  blackVersionScroll("HARDSUMMER");
 }
 
 void loop() {
@@ -346,4 +368,5 @@ void setup() {
     pinMode( DIN_PIN1, INPUT_PULLUP );
     pinMode( DIN_PIN2, INPUT_PULLUP );
     pinMode( DIN_PIN3, INPUT_PULLUP );
+    progPound();
 }
