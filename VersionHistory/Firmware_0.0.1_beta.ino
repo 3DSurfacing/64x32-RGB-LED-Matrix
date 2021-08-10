@@ -445,16 +445,16 @@ void setup() {
     pinMode( DIN_PIN1, INPUT_PULLUP );
     pinMode( DIN_PIN2, INPUT_PULLUP );
     pinMode( DIN_PIN3, INPUT_PULLUP );
-    //prog1();
-//    prog2();
+    prog1();
+    prog2();
     prog3();
-//    prog4();
-//    prog5();
-//    prog6();
-//    prog7();
-//    prog8();
-//    prog9();
-//    progStar();
-//    progZero();
-//    progPound();
+   prog4();
+   prog5();
+   prog6();
+   prog7();
+   prog8();
+   prog9();
+   progStar();
+   progZero();
+   progPound();
 }
